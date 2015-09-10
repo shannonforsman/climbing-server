@@ -1,5 +1,4 @@
 require('dotenv').load()
-
 var express    = require('express')
 var bodyParser = require('body-parser')
 var cors = require('cors')
@@ -16,7 +15,6 @@ app.use(cors())
 
 
 app.post('/climbing-markers', function(req, res) {
-  console.log(req.body)
   climbs.insert(req.body, function(err, doc) {
     if (err) console.log(err)
     res.json(doc)
@@ -24,26 +22,68 @@ app.post('/climbing-markers', function(req, res) {
 })
 
 app.get('/climbing-markers', function(req, res) {
-  console.log(req.body)
   climbs.find({}, function(err, docs) {
-    console.log(docs)
+    console.log('docs', docs)
     res.json(docs)
   })
 })
 
-app.get('/climbing-info', function(req, res) {
-  climbInfo.find({}, function(err, docs) {
+app.put('/climbing-markers', function(req, res) {
+  console.log('req', req.body._id)
+  climbs.update({_id: req.body._id}, req.body, function(err, doc) {
+    if (err) console.log(err)
+    else {
+      console.log('doc', doc)
+      res.json(doc)
+    }
+  })
+})
+
+app.delete('/climbing-markers', function(req, res) {
+  climbs.find({}, function(err, docs) {
+    console.log('docs', docs)
     res.json(docs)
   })
 })
 
-app.post('/climbing-info', function(req, res) {
+
+app.put('/articles', function(req, res) {
   console.log(req.body)
-  climbInfo.find({}, req.body, function(err, doc) {
-    console.log('doc', doc)
-    res.json(doc)
+  articles.findOne({id: req.body.id}, function(err, doc) {
+    console.log(doc)
+    if (req.body.upvote) {
+      doc.votes ++
+    } else {
+      doc.votes --
+    }
+    articles.findAndModify({_id: doc._id}, doc, function(err, docs) {
+      console.log('docs', doc)
+      res.json(doc)
+    })
   })
 })
+
+// app.get('/climbing-info', function(req, res) {
+//   console.log('get', req.body)
+//   climbs.find({}, function(err, docs) {
+//     var info = docs.map(function(el) {
+//       var obj = {}
+//       obj.properties = el.properties
+//       obj._id = el._id
+//       return obj
+//     })
+//     console.log('info', info)
+//     console.log(docs)
+//     res.json(info)
+//   })
+// })
+
+// app.post('/climbing-info', function(req, res) {
+//   climbInfo.findOne(req.body, function(err, doc) {
+//     console.log('doc', doc)
+//     res.json(doc)
+//   })
+// })
 
 
 //
@@ -83,7 +123,5 @@ app.post('/climbing-info', function(req, res) {
 //     })
 //   })
 // })
-
-
 
 app.listen(process.env.PORT || 3000)
