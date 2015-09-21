@@ -25,12 +25,15 @@ app.get('/climbing-markers', function(req, res) {
   })
 })
 
-
 app.post('/climbing-markers/delete', function(req, res) {
   console.log('hi', req.body)
-  climbs.findOne({id: req.params.id}, function(err, doc) {
-    console.log('doc to be removed', doc)
-    climbs.remove(doc)
+  climbs.findOne({}, {id: req.body.id}, function(err, doc) {
+    console.log(doc)
+    if (doc === null) {
+      console.log('not deleted');
+    } else {
+      climbs.remove(doc)
+    }
   })
 })
 
@@ -44,7 +47,5 @@ app.put('/climbing-markers', function(req, res) {
     }
   })
 })
-
-
 
 app.listen(process.env.PORT || 3000)
