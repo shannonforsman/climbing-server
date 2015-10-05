@@ -11,6 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
 
+
 app.post('/climbing-markers', function(req, res) {
   climbs.insert(req.body, function(err, doc) {
     if (err) console.log(err)
@@ -20,17 +21,13 @@ app.post('/climbing-markers', function(req, res) {
 
 app.get('/climbing-markers', function(req, res) {
   climbs.find({}, function(err, docs) {
-    console.log('docs', docs)
     res.json(docs)
   })
 })
 
 app.post('/climbing-markers/delete', function(req, res) {
-  console.log('hi', req.body)
   climbs.findOne({}, {id: req.body.id}, function(err, doc) {
-    console.log(doc)
     if (doc === null) {
-      console.log('not deleted');
     } else {
       climbs.remove(doc)
     }
@@ -38,11 +35,9 @@ app.post('/climbing-markers/delete', function(req, res) {
 })
 
 app.put('/climbing-markers', function(req, res) {
-  console.log('req', req.body.id)
   climbs.update({id: req.body.id}, req.body, function(err, doc) {
     if (err) console.log(err)
     else {
-      console.log('doc', doc)
       res.json(doc)
     }
   })
